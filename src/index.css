@@ -1,0 +1,43 @@
+@import url(https://fonts.googleapis.com/css?family=Lobster:regular);
+@import url(https://fonts.googleapis.com/css?family=Nunito:200,300,regular,500,600,700,800,900,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic);
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*{
+    padding:0;
+    margin:0;
+    font-family: "Nunito"
+}
+
+
+html, body {
+    overflow-x: hidden!important;
+    width: 100%;
+}
+
+.p{
+    font-style: italic;
+    font-weight:700;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 7px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    border-radius: 10px;
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #C9C9C9; 
+    border-radius: 10px;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #919191; 
+  }

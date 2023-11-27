@@ -12,6 +12,7 @@ const Task = props => {
 
   const onCheck = () =>{
     SetMarked(prev=>(!prev));
+    props.onMark()
   }
 
   return (
@@ -37,7 +38,8 @@ Task.propTypes = {
   isDisabled: PropTypes.bool.isRequired,
   onDelete: PropTypes.func.isRequired,
   onEdit: PropTypes.func.isRequired,
-  id: PropTypes.string.isRequired
+  id: PropTypes.string.isRequired,
+  onMark: PropTypes.func.isRequired
 }
 
 export default Task;

@@ -3,8 +3,9 @@ import { Button } from "@material-tailwind/react";
 import Task from "./Task";
 import { uid } from "uid";
 import { Context } from "../../App";
+import Cookies from "js-cookie";
 
-const TodoList =() => {
+const TodoList = () => {
 
   const [rotate, SetRotate] = useState(0);
 
@@ -12,22 +13,34 @@ const TodoList =() => {
 
   const [Content, SetContent] = useState("");
 
-  const [Tasks, SetTasks] = useState([]);
+  const CTasks = Cookies.get("Tasks");
+  const initialTasks = CTasks ? JSON.parse(CTasks) : [];
+  
+  const [Tasks, SetTasks] = useState(initialTasks);
+
+  const IsMarked = Cookies.get("IsMarked");
+  const InitialMarked = IsMarked ? IsMarked : true;
+  const [IsFilteredMarked, SetMarked] = useState(InitialMarked);
 
   const Delete = index => {
-    SetTasks(prevTasks =>(prevTasks.filter((item) => item.id !== index)));
+    SetTasks(prevTasks =>{
+      const newTask = prevTasks.filter((item) => item.id !== index);
+      Cookies.set("Tasks", JSON.stringify(newTask));
+      return newTask;
+    });
   };    
 
   const Rotate = () =>{
     SetRotate(prev=>prev - 180);
-    if(Sort){
-      SetTasks(prev=>prev.sort((a, b) => a.text.localeCompare(b.text)));
-    }
-    else{
-      SetTasks(prev=>prev.sort((a, b) => b.text.localeCompare(a.text)));
-    }
+      SetTasks(prev=>{
+        const newTasks = prev.sort((a, b) => Sort ? a.text.localeCompare(b.text) : b.text.localeCompare(a.text));
+        Cookies.set("Tasks",JSON.stringify(newTasks));
+        return newTasks;
+      });
 
-    ChangeSort(!Sort)
+    ChangeSort(prev=>{Cookies.set("Sort", !prev)
+    return !Sort}
+    )
     
   }
 
@@ -48,7 +61,12 @@ const TodoList =() => {
       id: uid()
     }
     if(Content){
-      SetTasks(prev=>([...prev, Task]));
+      SetTasks(prev => {
+        const newTasks = [...prev, Task];
+        Cookies.set("Tasks", JSON.stringify(newTasks));
+        return newTasks;
+      });
+      
       SetContent("");
     }
   }
@@ -59,16 +77,44 @@ const TodoList =() => {
     }
   }
 
+  const onMark = (index) => {
+    SetTasks((prev) => {
+      const updatedTasks = prev.map((task) =>
+        task.id === index ? { ...task, marked: !task.marked } : task
+      );
+  
+      Cookies.set("Tasks", JSON.stringify(updatedTasks));
+  
+      return updatedTasks;
+    });
+  };
+
+  const FilterCheck = () => {
+    SetTasks((prev) => {
+      const fCheck = prev.filter((item) => item.marked === false);
+      const Checking = IsFilteredMarked ? fCheck : JSON.parse(Cookies.get("Backup") || '[]');
+      IsFilteredMarked && Cookies.set("Backup", JSON.stringify(Tasks));
+      return Checking;
+    });
+  
+    SetMarked(prev => {
+      Cookies.set("IsMarked", !prev);
+      return !prev;
+    });
+  };
+
   const Mapping = () =>{
     return Tasks.map((item) =>
     <Task
-    key={item.id}
-    id={item.id}
-    text={item.text}
-    marked={item.marked}
-    isDisabled={item.isDisabled}
-    onEdit={() => Edit(item.id, item.text)}
-    onDelete={() => Delete(item.id)}/>
+      key={item.id}
+      id={item.id}
+      text={item.text}
+      marked={item.marked}
+      isDisabled={item.isDisabled}
+      onEdit={() => Edit(item.id, item.text)}
+      onDelete={() => Delete(item.id)}
+      onMark={()=> onMark(item.id)}
+    />
   )
   }
 
@@ -81,8 +127,8 @@ const TodoList =() => {
           <Button onClick={Rotate} className="swap bg-yellow-400  max-sm:w-[50%] w-[60px] h-[60px] mr-[10px] mt-[15px] sm:mt-[25px] rounded-full flex items-center justify-center cursor-pointer">
             <img src="/images/Swap-Icon.svg" alt="" style={{ transform: `rotate(${rotate}deg)`, transition:"0.3s" }}/>
           </Button>
-          <Button onClick={Rotate} className="swap bg-yellow-400 max-sm:w-[50%] w-[60px] h-[60px] sm:mr-[10px] mt-[15px] sm:mt-[25px] rounded-full flex items-center justify-center cursor-pointer">
-            <img src="/images/Swap-Icon.svg" alt="" style={{ transform: `rotate(${rotate}deg)`, transition:"0.3s" }}/>
+          <Button onClick={FilterCheck} className="swap bg-yellow-400 max-sm:w-[50%] w-[60px] h-[60px] sm:mr-[10px] mt-[15px] sm:mt-[25px] rounded-full flex items-center justify-center cursor-pointer">
+            <img src="/images/Hide.svg"/>
           </Button>
         </div>
         <div className="MyList max-w-[450px] w-full min-h-[500px] rounded-3xl bg-[#F5F5F5] relative p-3 xs:p-7">

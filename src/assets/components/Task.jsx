@@ -15,12 +15,12 @@ const Task = props => {
   }
 
   return (
-    <div className="task h-[50px] bg-[#FAFAFA] flex items-center justify-between rounded-2xl text-[#343434] mb-4 last:mb-0">
+    <div className="task min-h-[50px] bg-[#FAFAFA] flex items-center justify-between rounded-2xl text-[#343434] mb-4 last:mb-0">
     <div className="flex">
       <div>
         <div onClick={onCheck}>{Marked ? <CheckFill/> : <Check/>}</div>
       </div>
-      <div className={`p bg-transparent outline-none ${Marked && "line-through"}`}>{props.text}</div>
+      <div className={`p bg-transparent outline-none break-all ${Marked && "line-through"}`}>{props.text}</div>
     </div>
     <div className="flex">
       <div onClick={props.onEdit}><Edit/></div>

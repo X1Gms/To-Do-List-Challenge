@@ -1,6 +1,6 @@
 # React Challenge
 
-Challenged by Gabriel Lobo, doing a To-Do List according the elecctro rules
+Challenged by Gabriel Lobo, doing a To-Do List
 
 # Rules
 

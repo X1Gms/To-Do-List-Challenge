@@ -35,7 +35,6 @@ const Task = props => {
 Task.propTypes = {
   text: PropTypes.string.isRequired,
   marked: PropTypes.bool.isRequired,
-  isDisabled: PropTypes.bool.isRequired,
   onDelete: PropTypes.func.isRequired,
   onEdit: PropTypes.func.isRequired,
   id: PropTypes.string.isRequired,

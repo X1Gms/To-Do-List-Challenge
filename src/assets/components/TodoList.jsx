@@ -18,9 +18,7 @@ const TodoList = () => {
   
   const [Tasks, SetTasks] = useState(initialTasks);
 
-  const IsMarked = Cookies.get("IsMarked");
-  const InitialMarked = IsMarked ? IsMarked : true;
-  const [IsFilteredMarked, SetMarked] = useState(InitialMarked);
+  const [IsMarked, SetMarked] = useState(false);
 
   const Delete = index => {
     SetTasks(prevTasks =>{
@@ -57,7 +55,6 @@ const TodoList = () => {
     const Task = {
       text: Content,
       marked: false,
-      isDisabled: true,
       id: uid()
     }
     if(Content){
@@ -87,30 +84,22 @@ const TodoList = () => {
   
       return updatedTasks;
     });
-  };
+  };  
 
-  const FilterCheck = () => {
-    SetTasks((prev) => {
-      const fCheck = prev.filter((item) => item.marked === false);
-      const Checking = IsFilteredMarked ? fCheck : JSON.parse(Cookies.get("Backup") || '[]');
-      IsFilteredMarked && Cookies.set("Backup", JSON.stringify(Tasks));
-      return Checking;
-    });
-  
-    SetMarked(prev => {
-      Cookies.set("IsMarked", !prev);
-      return !prev;
-    });
-  };
+  const FilterCheck = () =>{
+    SetMarked(prev => !prev);
+  }
 
   const Mapping = () =>{
-    return Tasks.map((item) =>
+
+    const fTasks = Tasks.filter((item)=> IsMarked ? item.marked === false : item.marked === true || item.marked === false);
+
+    return fTasks.map((item) =>
     <Task
       key={item.id}
       id={item.id}
       text={item.text}
       marked={item.marked}
-      isDisabled={item.isDisabled}
       onEdit={() => Edit(item.id, item.text)}
       onDelete={() => Delete(item.id)}
       onMark={()=> onMark(item.id)}

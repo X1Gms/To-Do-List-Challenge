@@ -1,111 +1,31 @@
-import { useContext, useState } from "react";
 import { Button } from "@material-tailwind/react";
-import Task from "./Task";
-import { uid } from "uid";
-import { Context } from "../../App";
-import Cookies from "js-cookie";
+import AppHook from "../context/AppHook";
+import { useEffect } from "react";
 
 const TodoList = () => {
 
-  const [rotate, SetRotate] = useState(0);
+  const {rotate} = AppHook();
 
-  const [Sort, ChangeSort] = useContext(Context);
+  const {Content} = AppHook();
 
-  const [Content, SetContent] = useState("");
+  const {Rotate} = AppHook();
 
-  const CTasks = Cookies.get("Tasks");
-  const initialTasks = CTasks ? JSON.parse(CTasks) : [];
-  
-  const [Tasks, SetTasks] = useState(initialTasks);
+  const {onChangeInput} = AppHook();
 
-  const [IsMarked, SetMarked] = useState(false);
+  const {onSubmit} = AppHook();
 
-  const Delete = index => {
-    SetTasks(prevTasks =>{
-      const newTask = prevTasks.filter((item) => item.id !== index);
-      Cookies.set("Tasks", JSON.stringify(newTask));
-      return newTask;
-    });
-  };    
+  const {KeyDown} = AppHook();
 
-  const Rotate = () =>{
-    SetRotate(prev=>prev - 180);
-      SetTasks(prev=>{
-        const newTasks = prev.sort((a, b) => Sort ? a.text.localeCompare(b.text) : b.text.localeCompare(a.text));
-        Cookies.set("Tasks",JSON.stringify(newTasks));
-        return newTasks;
-      });
+  const {FilterCheck} = AppHook();
 
-    ChangeSort(prev=>{Cookies.set("Sort", !prev)
-    return !Sort}
-    )
-    
-  }
+  const {Mapping} = AppHook();
 
-  const onChangeInput = e =>{
-    SetContent(e.target.value)
-  }
-
-  const Edit = (index, text) =>{
-    Delete(index);
-    SetContent(text);
-  }
-
-  const onSubmit = () =>{
-    const Task = {
-      text: Content,
-      marked: false,
-      id: uid()
+  useEffect(()=>{
+     const Mappin = async () =>{
+      await Mapping
     }
-    if(Content){
-      SetTasks(prev => {
-        const newTasks = [...prev, Task];
-        Cookies.set("Tasks", JSON.stringify(newTasks));
-        return newTasks;
-      });
-      
-      SetContent("");
-    }
-  }
-
-  const KeyDown = e =>{
-    if(e.key === "Enter"){
-      onSubmit();
-    }
-  }
-
-  const onMark = (index) => {
-    SetTasks((prev) => {
-      const updatedTasks = prev.map((task) =>
-        task.id === index ? { ...task, marked: !task.marked } : task
-      );
-  
-      Cookies.set("Tasks", JSON.stringify(updatedTasks));
-  
-      return updatedTasks;
-    });
-  };  
-
-  const FilterCheck = () =>{
-    SetMarked(prev => !prev);
-  }
-
-  const Mapping = () =>{
-
-    const fTasks = Tasks.filter((item)=> IsMarked ? item.marked === false : item.marked === true || item.marked === false);
-
-    return fTasks.map((item) =>
-    <Task
-      key={item.id}
-      id={item.id}
-      text={item.text}
-      marked={item.marked}
-      onEdit={() => Edit(item.id, item.text)}
-      onDelete={() => Delete(item.id)}
-      onMark={()=> onMark(item.id)}
-    />
-  )
-  }
+    Mappin()
+  })
 
   return (
     <div className="body w-screen h-screen flex flex-col justify-center p-[15px]">
